@@ -8,6 +8,7 @@ import torch
 import torch.nn as nn
 import pdb
 import os
+os.environ["CUDA_VISIBLE_DEVICES"] = '3'
 import pandas as pd
 from utils.utils import *
 from math import floor
@@ -29,6 +30,7 @@ parser.add_argument('--save_exp_code', type=str, default=None,
 parser.add_argument('--overlap', type=float, default=None)
 parser.add_argument('--config_file', type=str, default="heatmap_config_template.yaml")
 args = parser.parse_args()
+args.config_file = '/home/ps/hhy/clam/heatmaps/configs/config_camelyon.yaml'
 
 def infer_single_slide(model, features, label, reverse_label_dict, k=1):
 	features = features.to(device)
@@ -79,8 +81,10 @@ def parse_config_dict(args, config_dict):
 	return config_dict
 
 if __name__ == '__main__':
-	config_path = os.path.join('heatmaps/configs', args.config_file)
-	config_dict = yaml.safe_load(open(config_path, 'r'))
+	# config_path = os.path.join('heatmaps/configs', args.config_file)
+ 	# config_dict = yaml.safe_load(open(config_path, 'r'))
+  
+	config_dict = yaml.safe_load(open(args.config_file, 'r'))
 	config_dict = parse_config_dict(args, config_dict)
 
 	for key, value in config_dict.items():
@@ -91,13 +95,13 @@ if __name__ == '__main__':
 		else:
 			print ('\n'+key + " : " + str(value))
 			
-	decision = input('Continue? Y/N ')
-	if decision in ['Y', 'y', 'Yes', 'yes']:
-		pass
-	elif decision in ['N', 'n', 'No', 'NO']:
-		exit()
-	else:
-		raise NotImplementedError
+	# decision = input('Continue? Y/N ')
+	# if decision in ['Y', 'y', 'Yes', 'yes']:
+	# 	pass
+	# elif decision in ['N', 'n', 'No', 'NO']:
+	# 	exit()
+	# else:
+	# 	raise NotImplementedError
 
 	args = config_dict
 	patch_args = argparse.Namespace(**args['patching_arguments'])
@@ -121,7 +125,7 @@ if __name__ == '__main__':
 	def_vis_params = {'vis_level': -1, 'line_thickness': 250}
 	def_patch_params = {'use_padding': True, 'contour_fn': 'four_pt'}
 
-	if preset is not None:
+	if preset:
 		preset_df = pd.read_csv(preset)
 		for key in def_seg_params.keys():
 			def_seg_params[key] = preset_df.loc[0, key]
@@ -136,7 +140,7 @@ if __name__ == '__main__':
 			def_patch_params[key] = preset_df.loc[0, key]
 
 
-	if data_args.process_list is None:
+	if not data_args.process_list:
 		if isinstance(data_args.data_dir, list):
 			slides = []
 			for data_dir in data_args.data_dir:
@@ -354,11 +358,12 @@ if __name__ == '__main__':
 		if os.path.isfile(os.path.join(r_slide_save_dir, heatmap_save_name)):
 			pass
 		else:
-			heatmap = drawHeatmap(scores, coords, slide_path, wsi_object=wsi_object, cmap=heatmap_args.cmap, alpha=heatmap_args.alpha, use_holes=True, binarize=False, vis_level=-1, blank_canvas=False,
-							thresh=-1, patch_size = vis_patch_size, convert_to_percentiles=True)
+			a = 1
+			# heatmap = drawHeatmap(scores, coords, slide_path, wsi_object=wsi_object, cmap=heatmap_args.cmap, alpha=heatmap_args.alpha, use_holes=True, binarize=False, vis_level=-1, blank_canvas=False,
+			# 				thresh=-1, patch_size = vis_patch_size, convert_to_percentiles=True)
 		
-			heatmap.save(os.path.join(r_slide_save_dir, '{}_blockmap.png'.format(slide_id)))
-			del heatmap
+			# heatmap.save(os.path.join(r_slide_save_dir, '{}_blockmap.png'.format(slide_id)))
+			# del heatmap
 
 		save_path = os.path.join(r_slide_save_dir, '{}_{}_roi_{}.h5'.format(slide_id, patch_args.overlap, heatmap_args.use_roi))
 

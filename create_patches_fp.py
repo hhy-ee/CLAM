@@ -229,13 +229,13 @@ def seg_and_patch(source, save_dir, patch_save_dir, mask_save_dir, stitch_save_d
 parser = argparse.ArgumentParser(description='seg and patch')
 parser.add_argument('--source', type = str,
 					help='path to folder containing raw wsi image files')
-parser.add_argument('--step_size', type = int, default=256,
+parser.add_argument('--step_size', type = int, default=1024,
 					help='step_size')
-parser.add_argument('--patch_size', type = int, default=256,
+parser.add_argument('--patch_size', type = int, default=1024,
 					help='patch_size')
-parser.add_argument('--patch', default=False, action='store_true')
-parser.add_argument('--seg', default=False, action='store_true')
-parser.add_argument('--stitch', default=False, action='store_true')
+parser.add_argument('--patch', default=True, action='store_true')
+parser.add_argument('--seg', default=True, action='store_true')
+parser.add_argument('--stitch', default=True, action='store_true')
 parser.add_argument('--no_auto_skip', default=True, action='store_false')
 parser.add_argument('--save_dir', type = str,
 					help='directory to save processed data')
@@ -248,7 +248,10 @@ parser.add_argument('--process_list',  type = str, default=None,
 
 if __name__ == '__main__':
 	args = parser.parse_args()
-
+	args.source = '/media/ps/passport2/hhy/camelyon16/train/tumor'
+	args.save_dir = '/media/ps/passport2/hhy/camelyon16/train/clam_result'
+	args.seg = True
+ 
 	patch_save_dir = os.path.join(args.save_dir, 'patches')
 	mask_save_dir = os.path.join(args.save_dir, 'masks')
 	stitch_save_dir = os.path.join(args.save_dir, 'stitches')

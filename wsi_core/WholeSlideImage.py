@@ -685,13 +685,13 @@ class WholeSlideImage(object):
         print('using block size: {} x {}'.format(block_size_x, block_size_y))
 
         shift = top_left # amount shifted w.r.t. (0,0)
-        for x_start in range(top_left[0], bot_right[0], block_size_x * int(downsample[0])):
-            for y_start in range(top_left[1], bot_right[1], block_size_y * int(downsample[1])):
+        for x_start in range(top_left[0], bot_right[0], block_size_x * int(np.ceil(downsample[0]))):
+            for y_start in range(top_left[1], bot_right[1], block_size_y * int(np.ceil(downsample[1]))):
                 #print(x_start, y_start)
 
                 # 1. convert wsi coordinates to image coordinates via shift and scale
-                x_start_img = int((x_start - shift[0]) / int(downsample[0]))
-                y_start_img = int((y_start - shift[1]) / int(downsample[1]))
+                x_start_img = int((x_start - shift[0]) / int(np.ceil(downsample[0])))
+                y_start_img = int((y_start - shift[1]) / int(np.ceil(downsample[1])))
                 
                 # 2. compute end points of blend tile, careful not to go over the edge of the image
                 y_end_img = min(h, y_start_img+block_size_y)
